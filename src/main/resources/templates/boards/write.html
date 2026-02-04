@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org/"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/default}">
+<head>
+    <meta charset="UTF-8">
+    <title>글 등록</title>
+</head>
+<body>
+  <div layout:fragment =  "content">
+    <div class="container">
+      <h1>글 등록</h1>
+      <!--
+       파일을 Controller 로 전송하기 위해서는 <form> 태그에 두가지 속성을 필수로 추가
+       1. method = "post" : GET 방식은 파일 전송을 지원하지 않는다.
+       2. enctype = "multipart/form-data" : 폼 데이터가 여러 부분(multipart)으로 나뉘어 전송됨을 명시
+                                            텍스트 데이터와 파일 데이터가 분리되어 서버로 전송.
+       -->
+      <form th:action="@{/boards/write}" method="post" class = "d-flex" enctype="multipart/form-data">
+        <input type="text" name="title" placeholder="제목을 입력해주세요.">
+        <input type="text" name="content" placeholder="내용을 입력해주세요.">
+
+          <!-- 파일 첨부를 위한 <input> 태그 -->
+        <div class = "mb-3">
+          <label for = "file" class = "form-label">파일 첨부</label>
+          <input type = "file" id = "file" name = "file" class = "form-control">
+        </div>
+        </input>
+        <button type="submit" class="btn btn-primary">등록하기</button>
+        <a th:href="@{/boards}" class="btn btn-secondary">취소하기</a>
+      </form>
+
+    </div>
+  </div>
+</body>
+</html>

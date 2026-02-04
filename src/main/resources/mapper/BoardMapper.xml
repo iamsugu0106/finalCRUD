@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- namespace 속성 : 이 XML 파일과 매핑될 자바 인터페이스의 전체 경로 지정
+    id : 인터페이스 메서드명과 동일하게 작성(즉, 재정의)
+    parameterType : 매개변수의 자료형
+    resultType : 반환값의 자료형
+-->
+<mapper namespace="com.site.mapper.BoardMapper">
+    <!-- 동적 SQL을 사용한 검색 기능 추가 -->
+    <select id="findAll" parameterType="java.lang.String" resultType="com.site.domain.Board">
+        SELECT bno, title, content, writer, createAt, updateAt
+        FROM board
+        <where>
+            <if test="keyword != null and keyword != ''">
+                <choose>
+                    <when test="searchType == 'title'">
+                        AND title LIKE LOWER(CONCAT('%', #{keyword}, '%'))
+                    </when>
+                    <when test="searchType == 'content'">
+                        AND content LIKE LOWER(CONCAT('%', #{keyword}, '%'))
+                    </when>
+                    <when test="searchType == 'writer'">
+                        AND writer LIKE LOWER(CONCAT('%', #{keyword}, '%'))
+                    </when>
+                </choose>
+            </if>
+        </where>
+        ORDER BY bno DESC
+    </select>
+    <select id="findById" parameterType="Long" resultType="com.site.domain.Board">
+        SELECT bno, title, content, writer, createAt, updateAt
+        FROM board
+        WHERE bno = #{bno}
+    </select>
+    <insert id="addContent" parameterType="board" useGeneratedKeys="true" keyProperty="bno">
+        INSERT INTO board (title, content, writer)
+        VALUES (#{title}, #{content}, #{writer})
+    </insert>
+    <update id="contentModify" parameterType="board">
+        UPDATE board
+        SET title = #{title}, content = #{content}, updateAt = NOW()
+        WHERE bno = #{bno}
+    </update>
+    <delete id="contentDelete" parameterType="Long">
+        DELETE FROM board
+        WHERE bno = #{bno}
+    </delete>
+</mapper>

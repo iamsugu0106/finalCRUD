@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- namespace 속성 : 이 XML 파일과 매핑될 자바 인터페이스의 전체 경로 지정 -->
+<mapper namespace="com.site.mapper.FileMapper">
+    <!-- 파일 정보를 'File' 테이블에 삽입하는 쿼리 -->
+    <insert id="save" parameterType="com.site.domain.File">
+        INSERT INTO file (board_id, original_name, stored_name, file_path)
+        VALUES (#{board_id}, #{original_name}, #{stored_name}, #{file_path})
+    </insert>
+    <!-- 특정 게시글에 첨부된 모든 파일 정보를 조회하는 쿼리 -->
+    <select id="findFilesByBoardId" parameterType="long" resultType="com.site.domain.File">
+        SELECT id, board_id, original_name, stored_name, file_path
+        FROM file
+        WHERE board_id = #{bno}
+    </select>
+
+    <!-- 파일 ID로 특정 파일 정보를 조회하는 쿼리 -->
+    <select id="findById" parameterType="long" resultType="com.site.domain.File">
+        SELECT id, board_id, original_name, stored_name, file_path
+        FROM file
+        WHERE id = #{fileId}
+    </select>
+</mapper>
