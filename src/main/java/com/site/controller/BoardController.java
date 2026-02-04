@@ -97,13 +97,19 @@ public class BoardController {
     public String contentModify(@PathVariable long bno, Model model){
         Board board = boardService.findById(bno);
         model.addAttribute("board", board);
+
+        List<File> attachedFiles = fileService.findFilesByBoardId(bno);
+        model.addAttribute("attachedFiles", attachedFiles);
         return "boards/boardModifyForm";
     }
 
     @PostMapping("/{bno}/contentModify")
-    public String contentModify(@PathVariable long bno, Board board){
+    public String contentModify(@PathVariable long bno, Board board, @RequestParam("file") MultipartFile file){
         board.setBno(bno);
         boardService.contentModify(board);
+        if (!file.isEmpty()) {
+            fileService.saveFile(board.getBno(), file);
+        }
         return "redirect:/boards";
     }
 

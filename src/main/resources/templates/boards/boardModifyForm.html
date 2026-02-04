@@ -10,9 +10,32 @@
 <div layout:fragment =  "content">
     <div class="container">
         <h1>글 수정</h1>
-        <form th:action="@{/boards/{bno}/contentModify(bno=${board.bno})}" method="post" class = "d-flex">
+        <form th:action="@{/boards/{bno}/contentModify(bno=${board.bno})}" method="post" class = "d-flex" enctype="multipart/form-data">
             <input type="text" name="title" th:value="${board.title}" placeholder="수정할 제목을 입력해주세요.">
-            <input type="text" name="content" th:value="${board.content}" placeholder="수정할 내용을 입력해주세요."></input>
+            <input type="text" name="content" th:value="${board.content}" placeholder="수정할 내용을 입력해주세요.">
+            <div th:if = "${not #lists.isEmpty(attachedFiles)}" class = "bm-3">
+                <strong>첨부 파일 : </strong>
+                <ul>
+                    <!-- attachedFiles 리스트를 순회하며 각 파일에 대해 <li> 태그를 반복 생성 -->
+                    <li th:each = "attachedFile : ${attachedFiles}">
+                        <!--
+                        #strings.endsWithIgnoreCase : Thymeleaf의 문자열 유틸리티를 사용하여
+                        파일 이름이 특정 확장자로 끝나는지 확인(대소문자 구분)
+                        이미지 파일인 경우 (jpg, png, gif) 이 블록이 ㅍ시
+                        -->
+                        <div th:if = "${#strings.endsWith(attachedFile.original_name, '.jpg')
+            or #strings.endsWith(attachedFile.original_name, '.png')
+            or #strings.endsWith(attachedFile.original_name, '.jpeg')}" class = "d-flex">
+                            <!-- 파일 이미지 -->
+                            <img width = "33%" height = "33%" th:src = "@{/images/{filename}(filename = ${attachedFile.stored_name})}" class = "img-fluid rounded mb-3" alt = "첨부된 파일">
+                        </div>
+                    </li>
+                </ul>
+            </div>
+            <div class = "mb-3">
+                <label for = "file" class = "form-label">파일 첨부</label>
+                <input type = "file" id = "file" name = "file" class = "form-control">
+            </div>
             <button type="submit" class="btn btn-primary">글 수정하기</button>
             <a th:href="@{/boards/{bno}(bno=${board.bno})}" class="btn btn-secondary">취소하기</a>
         </form>
