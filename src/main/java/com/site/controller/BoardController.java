@@ -95,21 +95,34 @@ public class BoardController {
      * cf) @RequestParam : 데이터의 조건(옵션)
      */
     public String contentModify(@PathVariable long bno, Model model){
+
         Board board = boardService.findById(bno);
         model.addAttribute("board", board);
 
+        // 기존 첨부파일 정보 조회 후 모델에 추가
         List<File> attachedFiles = fileService.findFilesByBoardId(bno);
         model.addAttribute("attachedFiles", attachedFiles);
         return "boards/boardModifyForm";
     }
 
+    // 파일 로직 추가 : 새로운 파일 첨부시 기존 파일 삭제 후 새 파일 저장
     @PostMapping("/{bno}/contentModify")
     public String contentModify(@PathVariable long bno, Board board, @RequestParam("file") MultipartFile file){
         board.setBno(bno);
+
+        // 1. 게시글 텍스트 정보(제목, 내용)를 업데이트
+
         boardService.contentModify(board);
+
+        // 2. 새로운 파일이 실제로 첨부되어 있는지 확인
         if (!file.isEmpty()) {
+            // 3. 기존에 첨부된 파일들을 모두 삭제 (서버 파일 + DB 정보)
+            fileService.deleteFile(bno);
+            // 4. 새로운 파일 저장
             fileService.saveFile(board.getBno(), file);
         }
+
+
         return "redirect:/boards";
     }
 
@@ -120,6 +133,9 @@ public class BoardController {
 
     @PostMapping("/{bno}/delete")
     public String delete(@PathVariable long bno){
+        if(!fileService.findFilesByBoardId(bno).isEmpty()){
+            fileService.deleteFile(bno);
+        }
         boardService.contentDelete(bno);
         return "redirect:/boards";
     }

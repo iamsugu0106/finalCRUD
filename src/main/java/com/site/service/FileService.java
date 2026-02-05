@@ -89,4 +89,27 @@ public class FileService {
     public com.site.domain.File findById(long fileId) {
         return fileMapper.findById(fileId);
     }
+
+    // 파일 삭제 후 새로운 파일 등록 기능 구현
+    @Transactional
+    public void deleteFile(long bno) {
+        // 1. DB에서 게시글에 첨부된 파일 정보 조회
+        List<com.site.domain.File> files = fileMapper.findFilesByBoardId(bno);
+
+        // 2. 파일 목록을 순회하며 서버에 저장된 실제 파일 삭제
+        for(com.site.domain.File file : files){
+            String filePath = file.getFile_path();
+
+            File deletefile = new File(filePath);
+
+            if(deletefile.exists()) {
+                deletefile.delete();
+            }
+
+        }
+
+        // 3. DB에서 파일 정보 삭제
+//        fileMapper.findFilesByBoardId(bno)
+        fileMapper.deleteByBoardId(bno);
+    }
 }

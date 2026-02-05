@@ -54,6 +54,8 @@
         </ul>
       </div>
     </table>
+    <hr>
+
     <div th:if = "${board.writer} == ${session.user.id}" class="d-flex">
       <a th:href = "@{/boards/{bno}/contentModify(bno=${board.bno})}" class = "btn btn-primary me-2">글 수정하기</a>
       <form th:action = "@{/boards/{bno}/delete(bno=${board.bno})}" method = "post">

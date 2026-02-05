@@ -14,4 +14,6 @@ public interface FileMapper {
     List<File> findFilesByBoardId(long bno);
 
     File findById(long fileId);
+
+    void deleteByBoardId(long bno);
 }

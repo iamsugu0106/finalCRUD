@@ -22,4 +22,12 @@
         FROM file
         WHERE id = #{fileId}
     </select>
+    <delete id="deleteByBoardId" parameterType="long">
+        DELETE FROM file
+        WHERE board_id = #{bno}
+    </delete>
+    <delete id="deleteById" parameterType="long">
+        DELETE FROM file
+        WHERE id = #{id}
+    </delete>
 </mapper>
